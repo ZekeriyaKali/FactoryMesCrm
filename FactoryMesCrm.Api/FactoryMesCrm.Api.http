@@ -1,0 +1,6 @@
+@FactoryMesCrm.Api_HostAddress = http://localhost:5265
+
+GET {{FactoryMesCrm.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
