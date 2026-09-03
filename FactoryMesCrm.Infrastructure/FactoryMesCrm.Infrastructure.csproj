@@ -6,4 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MassTransit.RabbitMQ" Version="9.2.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FactoryMesCrm.Application\FactoryMesCrm.Application.csproj" />
+    <ProjectReference Include="..\FactoryMesCrm.Domain\FactoryMesCrm.Domain.csproj" />
+    <ProjectReference Include="..\FactoryMesCrm.Persistence\FactoryMesCrm.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>
