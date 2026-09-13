@@ -52,7 +52,7 @@ public record OrderApprovedItemDto(string ProductCode, int Quantity);
 public record CustomerOrderApprovedEvent(
     Guid CustomerOrderId, 
     string OrderNumber, 
-    List<OrderApprovedItemDto> Items, 
+    IReadOnlyCollection<OrderApprovedItemDto> Items, 
     DateTime OccurredOn
 ) : IDomainEvent
 {

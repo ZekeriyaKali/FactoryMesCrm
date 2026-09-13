@@ -1,6 +1,7 @@
 ﻿using FactoryMesCrm.Application.Common.Events;
 using FactoryMesCrm.Domain.Events;
 using FactoryMesCrm.Persistence;
+using FactoryMesCrm.Persistence.Contexts;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,7 @@ namespace FactoryMesCrm.Infrastructure.Outbox;
 
 public class OutboxProcessorService : BackgroundService
 {
-    private readonly IIServiceScopeFactory _serviceScopeFactory;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ILogger<OutboxProcessorService> _logger;
     private const int BatchSize = 20; // Bellek tüketimini sınırlandırmak için batching
 
@@ -74,7 +75,7 @@ public class OutboxProcessorService : BackgroundService
                     if (domainEvent != null)
                     {
                         var integrationEvent = new CustomerOrderApprovedIntegrationEvent(
-                            domainEvent.OrderId,
+                            domainEvent.CustomerOrderId,
                             domainEvent.OrderNumber,
                             domainEvent.Items.Select(i => new OrderApprovedItemIntegrationDto(i.ProductCode, i.Quantity)).ToList(),
                             message.OccurredOnUtc

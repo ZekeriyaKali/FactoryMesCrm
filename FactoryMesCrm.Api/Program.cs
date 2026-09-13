@@ -3,7 +3,6 @@ using FactoryMesCrm.Application;
 using FactoryMesCrm.Infrastructure;
 using FactoryMesCrm.Persistence;
 using Microsoft.OpenApi;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
