@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -8,6 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FactoryMesCrm.Application\FactoryMesCrm.Application.csproj" />
+    <ProjectReference Include="..\FactoryMesCrm.Infrastructure\FactoryMesCrm.Infrastructure.csproj" />
+    <ProjectReference Include="..\FactoryMesCrm.Persistence\FactoryMesCrm.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
