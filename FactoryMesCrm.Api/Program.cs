@@ -2,7 +2,9 @@ using FactoryMesCrm.Api.Middlewares;
 using FactoryMesCrm.Application;
 using FactoryMesCrm.Infrastructure;
 using FactoryMesCrm.Persistence;
+using FactoryMesCrm.Persistence.Contexts;
 using Microsoft.OpenApi;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,25 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Otomatik Database Migration (Container Startup)
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        var dbContext = services.GetRequiredService<ApplicationDbContext>();
+        logger.LogInformation("Veritabaný migration kontrolü yapýlýyor...");
+        await dbContext.Database.MigrateAsync();
+        logger.LogInformation("Veritabaný migration baþarýyla tamamlandý.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Veritabaný migration uygulanýrken bir hata oluþtu.");
+    }
+}
 
 // 4. Custom Global Exception Handling Middleware Kaydý
 app.UseMiddleware<ExceptionHandlingMiddleware>();

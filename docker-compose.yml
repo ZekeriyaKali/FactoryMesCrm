@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # -------------------------------------------------------------
+  # PostgreSQL Database Service
+  # -------------------------------------------------------------
+  postgres.db:
+    image: postgres:16-alpine
+    container_name: factory_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: FactoryMesCrmDb
+      POSTGRES_USER: factory_user
+      POSTGRES_PASSWORD: FactorySecurePassword123!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - factory_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U factory_user -d FactoryMesCrmDb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # -------------------------------------------------------------
+  # RabbitMQ Message Broker Service
+  # -------------------------------------------------------------
+  rabbitmq.broker:
+    image: rabbitmq:3-management-alpine
+    container_name: factory_rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: factory_rabbit
+      RABBITMQ_DEFAULT_PASS: RabbitSecurePassword123!
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Dashboard
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - factory_network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # -------------------------------------------------------------
+  # Factory MES & CRM Web API Service
+  # -------------------------------------------------------------
+  web.api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: factory_web_api
+    restart: always
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PostgreSQL=Host=postgres.db;Port=5432;Database=FactoryMesCrmDb;Username=factory_user;Password=FactorySecurePassword123!
+      - RabbitMQ__Host=rabbitmq.broker
+      - RabbitMQ__Username=factory_rabbit
+      - RabbitMQ__Password=RabbitSecurePassword123!
+    depends_on:
+      postgres.db:
+        condition: service_healthy
+      rabbitmq.broker:
+        condition: service_healthy
+    networks:
+      - factory_network
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+
+networks:
+  factory_network:
+    driver: bridge
